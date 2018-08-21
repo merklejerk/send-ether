@@ -1,16 +1,16 @@
-[![build status](https://travis-ci.org/cluracan/send-tokens.svg?branch=master)](https://travis-ci.org/cluracan/send-tokens)
-[![npm package](https://badge.fury.io/js/send-tokens.svg)](https://www.npmjs.com/package/send-tokens)
+[![build status](https://travis-ci.org/cluracan/send-ether.svg?branch=master)](https://travis-ci.org/cluracan/send-ether)
+[![npm package](https://badge.fury.io/js/send-ether.svg)](https://www.npmjs.com/package/send-ether)
 
-# send-tokens
-A simple CLI tool for sending Ethereum ERC20 tokens using any of the following:
+# send-ether
+A simple CLI tool for sending Ethereum ether using any of the following:
 
 - A wallet's private key
 - A keystore file
 - An HD wallet mnemonic phrase
 - A provider (node) wallet address
 
-For the ether version of this package, check out
-[send-ether](https://github.com/cluracan/send-ether).
+For the ERC20 token version of this package, check out
+[send-tokens](https://github.com/cluracan/send-tokens).
 
 ### Contents
 
@@ -23,43 +23,41 @@ For the ether version of this package, check out
 
 ## Installation
 ```bash
-npm install -g send-tokens
+npm install -g send-ether
 # or
-yarn global add send-tokens
+yarn global add send-ether
 ```
 
 ## Examples
 ```bash
-# Address of token contract. May also be an ENS name.
-TOKEN='0x1658164265555FA310d20bC601Dd32e9b996A436'
-# Recipient of tokens. May also be an ENS name.
+# Recipient of ether. May also be an ENS name.
 DST='0x0420DC92A955e3e139b52142f32Bd54C6D46c023'
 # Sending wallet's private key.
 PRIVATE_KEY='0x52c251b9e04740157471a724e9a3210b83fac5834b29c89d5bd57661bd2a7057'
 # Sending wallet's HD mnemonic.
 MNEMONIC='butter crepes sugar flour eggs milk ...'
 
-# Send 100 wei (100e-18) of tokens to and address,
+# Send 100 wei (100e-18) to and address,
 # on the mainnet, using a wallet's private key
-$ send-tokens --key $PRIVATE_KEY $TOKEN $DST 100
+$ send-ether --key $PRIVATE_KEY $DST 100
 
-# Send 100 wei (100e-18) of tokens to an address, on ropsten,
+# Send 100 wei (100e-18) to an address, on ropsten,
 # using an HD wallet mnemonic
-$ send-tokens --network ropsten --mnemonic "$MNEMONIC" $TOKEN $DST 100
+$ send-ether --network ropsten --mnemonic "$MNEMONIC" $DST 100
 
-# Send 100 wei (100e-18) of tokens to an address, on the mainnet,
+# Send 100 wei (100e-18) to an address, on the mainnet,
 # using a keystore file.
-$ send-tokens --keystore './path/to/keystore.json' --password 'secret' $TOKEN $DST 100
+$ send-ether --keystore './path/to/keystore.json' --password 'secret' $DST 100
 
-# Send 100 wei (100e-18) of tokens to an address, on the provider's network,
+# Send 100 wei (100e-18) to an address, on the provider's network,
 # using the provider's default wallet, and wait for 3 confirmations.
-$ send-tokens --provider 'http://localhost:8545' --confirmations 3 $TOKEN $DST 100
+$ send-ether --provider 'http://localhost:8545' --confirmations 3 $DST 100
 ```
 
 ## All Options
 ```
-$ send-tokens --help
-Usage: send-tokens [options] <token> <to> <amount>
+$ send-ether --help
+Usage: send-ether [options] <to> <amount>
 
   Options:
 
@@ -92,13 +90,11 @@ Log entries follow this structure:
    id: '88fdd8a4b8084c36',
    // UNIX time.
    time: 1532471209842,
-   // Address of token contract.
-   token: '0x1658164265555FA310d20bC601Dd32e9b996A436',
    // Address of sender.
    from: '0x0420DC92A955e3e139b52142f32Bd54C6D46c023',
    // Address of recipient.
    to: '0x2621Ea417659Ad69BAE66AF05eBE5788e533E5e8',
-   // Amount of tokens sent (in weis).
+   // Amount of ether sent (in weis).
    amount: '20',
    // Transaction ID of transfer.
    txId: '0xd9255f8365305ebffd77cb30d09f82745eaa232e42739f5fc2788fa46f1347e3',
@@ -119,44 +115,42 @@ must be fully registered with the ENS contract and a resolver.
 
 
 ## Library Usage
-The `send-tokens` package can be used as a library through the `sendTokens()`
+The `send-ether` package can be used as a library through the `sendEther()`
 function.
 
-`sendTokens()` asynchronously resolves to a
+`sendEther()` asynchronously resolves to a
 [transaction receipt](https://web3js.readthedocs.io/en/1.0/web3-eth.html#eth-gettransactionreceipt-return)
 once the transaction has been mined (or confirmed, if the
 `confirmations` option is > 0).
 
-#### sendTokens() Examples
+#### sendEther() Examples
 
 ```js
-const {sendTokens} = require('send-tokens');
-// Address of token contract.
-const TOKEN_ADDRESS = '0x1658164265555FA310d20bC601Dd32e9b996A436';
-// Recipient of tokens.
+const {sendEther} = require('send-ether');
+// Recipient of ether.
 const RECIPIENT = '0x0420DC92A955e3e139b52142f32Bd54C6D46c023';
 
 // Sending wallet's private key.
 const PRIVATE_KEY = '0x52c251b9e04740157471a724e9a3210b83fac5834b29c89d5bd57661bd2a7057';
-// Send 100 wei (100e-18) of tokens to someone using a private key and wait for
+// Send 100 wei (100e-18) to someone using a private key and wait for
 // it to be mined.
-let receipt = await sendTokens(TOKEN_ADDRESS, RECIPIENT, '100',
+let receipt = await sendEther(RECIPIENT, '100',
   {key: PRIVATE_KEY});
 
 // Sending wallet's mnemonic.
 const MNEMONIC = 'butter crepes sugar flour eggs milk ...';
-// Send 100 wei (100e-18) of tokens to someone using a (BIP39) mnemonic phrase
+// Send 100 wei (100e-18) to someone using a (BIP39) mnemonic phrase
 // and wait for it to be mined and confirmed 3 times.
-receipt = await sendTokens(TOKEN_ADDRESS, RECIPIENT, '100',
+receipt = await sendEther(RECIPIENT, '100',
   {mnemonic: MNEMONIC, confirmations: 3});
 
 // Sending wallet's keystore file contents as a string.
 const KEYSTORE = '{...}';
 // Keystore password.
 const PASSWORD = 'secret';
-// Send 1 ether (1e18) of tokens to someone using a keystore file,
+// Send 1 ether (1e18) to someone using a keystore file,
 // print the transaction ID when it's available, and wait for it to be mined.
-receipt = await sendTokens(TOKEN_ADDRESS, RECIPIENT, '1', {
+receipt = await sendEther(RECIPIENT, '1', {
     keystore: KEYSTORE,
     password: PASSWORD,
     base: 18,
@@ -164,22 +158,18 @@ receipt = await sendTokens(TOKEN_ADDRESS, RECIPIENT, '1', {
   });
 ```
 
-#### Full sendTokens() Options
+#### Full sendEther() Options
 
 ```js
-const {sendTokens} = require('send-tokens');
-// Send TOKEN_AMOUNT tokens to RECIPIENT via the token contract at
-// TOKEN_ADDRESS.
-{tx: Object} = async sendTokens(
-  // Address of token contract.
-  // Should be a hex string ('0x...')
-  TOKEN_ADDRESS: String,
+const {sendEther} = require('send-ether');
+// Send AMOUNT ether to RECIPIENT.
+{tx: Object} = async sendEther(
   // Address of recipient.
   // Should be a hex string ('0x...')
   RECIPIENT: String,
-  // Amount of tokens to send. Units depend on `base` option.
+  // Amount of ether to send. Units depend on `base` option.
   // Should be a base-10 string (e.g., '1234...').
-  TOKEN_AMOUNT: String,
+  AMOUNT: String,
   // Options object
   {
     // Suppress output.
@@ -190,13 +180,13 @@ const {sendTokens} = require('send-tokens');
     // once it becomes available (transaction is posted to the blockchain but
     // not yet mined).
     onTxId: Function,
-    // Decimal places of token amount.
+    // Decimal places of amount.
     // E.g., 18 for whole ether, 0 for wei or smallest units.
     // Defaults to 0.
     base: Number,
     // If connecting to a custom provider (e.g., a private node), this
     // can be the set to the address of an unlocked wallet on the provider
-    // from which to send the tokens.
+    // from which to send the ether.
     account: String,
     // Hex-encoded 32-byte private key of sender (e.g., '0x1234...').
     key: String,
@@ -236,7 +226,7 @@ Another exposed library function is `toWallet()`, which returns an address
 full options.
 
 ```js
-const {toWallet} = require('send-tokens');
+const {toWallet} = require('send-ether');
 // Convert a private key, mnemonic, or keystore to an address and private-key
 // pair object. Both fields will be a hex-encoded string.
 {address: String, key: String} = toWallet({
