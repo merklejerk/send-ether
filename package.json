@@ -1,6 +1,6 @@
 {
 	"name": "send-ether",
-	"version": "1.0.0",
+	"version": "1.1.0",
 	"description": "Simple CLI tool (and library) to send ether with a private key, mnemonic, or keystore.",
 	"main": "src/lib.js",
 	"repository": {
@@ -28,7 +28,8 @@
 		"ethereumjs-wallet": "^0.6.0",
 		"flex-ether": "^1.1.2",
 		"lodash": "^4.17.10",
-		"mz": "^2.7.0"
+		"mz": "^2.7.0",
+		"prompt": "^1.0.0"
 	},
 	"devDependencies": {
 		"ganache-cli": "^6.1.5",
