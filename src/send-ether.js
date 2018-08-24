@@ -24,10 +24,9 @@ program
 	.option('-G, --gas-price <gwei>', `explicit gas price, in gwei (e.g., 20)`, parseFloat)
 	.option('-l, --log <file>', `append a JSON log to a file`)
 	.option('--no-confirm', `bypass input confirmation`)
-	.action(async function (token, to, amount) {
+	.action(async function (to, amount) {
 		try {
-			const opts = _.assign({}, this, {confirm: !this.noConfirm});
-			const r = await sendEther(token, to, amount, opts);
+			const r = await sendEther(to, amount, this);
 			process.exit(r ? 0 : -1);
 		} catch (err) {
 			console.error(err);
