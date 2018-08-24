@@ -168,7 +168,7 @@ const {sendEther} = require('send-ether');
   // Address of recipient.
   // Should be a hex string ('0x...')
   RECIPIENT: String,
-  // Amount of ether to send. Units depend on `base` option.
+  // Amount of ether to send. Units depend on `units` option.
   // Should be a base-10 decimal string (e.g., '1234.567').
   AMOUNT: String,
   // Options object
