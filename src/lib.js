@@ -36,6 +36,8 @@ async function sendEther(to, amount, opts={}) {
 		throw new Error(`Invalid address: ${to}`);
 	if (!_.isNumber(amount) && !/^\d+(\.\d+)?$/.test(amount))
 		throw new Error(`Invalid amount: ${amount}`);
+	if (_.isNumber(opts.decimals) && opts.decimals < 0)
+		throw new Error(`Invalid decimals: ${opts.decimals}`);
 
 	to = ethjs.isValidAddress(to) ? ethjs.toChecksumAddress(to) : to;
 	amount = toWei(amount, _.isNumber(opts.decimals) ? opts.decimals : 18);
