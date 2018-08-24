@@ -41,7 +41,8 @@ async function sendEther(to, amount, opts={}) {
 	amount = toWei(amount, _.isNumber(opts.units) ? opts.units : 18);
 	const confirmations = opts.confirmations || 0;
 	const txOpts = await createTransferOpts(opts);
-	const sender = await resolveSender(txOpts);
+	const eth = createFlexEther(txOpts);
+	const sender = await resolveSender(eth, txOpts);
 	const logId = createLogId({
 		time: _.now(),
 		to: to,
@@ -57,7 +58,7 @@ async function sendEther(to, amount, opts={}) {
 			return;
 	}
 
-	const {tx} = await transfer(to, amount, txOpts);
+	const {tx} = await transfer(eth, to, amount, txOpts);
 	const txId = await tx.txId;
 	if (_.isFunction(opts.onTxId))
 		opts.onTxId(txId);
@@ -89,16 +90,10 @@ function confirm() {
 	});
 }
 
-async function resolveSender(opts) {
+async function resolveSender(eth, opts) {
 	const w = toWallet(opts);
 	if (w && w.address)
 		return w.address;
-	const eth = new FlexEther({
-		provider: _.isObject(opts.provider) ? opts.provider : undefined,
-		providerURI: _.isString(opts.provider) ? opts.provider : undefined,
-		web3: opts.web3,
-		providerURI: opts.providerURI
-	});
 	return eth.getDefaultAccount();
 }
 
@@ -153,6 +148,17 @@ async function createTransferOpts(opts) {
 	return txOpts;
 }
 
+function createFlexEther(opts) {
+	return new FlexEther({
+			provider: opts.provider,
+			providerURI: opts.providerURI,
+			network: opts.network,
+			infuraKey: opts.infuraKey,
+			web3: opts.web3,
+			net: require('net')
+		});
+}
+
 function promptForPassword() {
 	return new Promise((accept, reject) => {
 		prompt.get({
@@ -188,15 +194,7 @@ function createJSONLogger(logId, file) {
 	};
 }
 
-async function transfer(to, amount, opts={}) {
-	const eth = new FlexEther({
-			provider: opts.provider,
-			providerURI: opts.providerURI,
-			network: opts.network,
-			infuraKey: opts.infuraKey,
-			web3: opts.web3,
-			net: require('net')
-		});
+async function transfer(eth, to, amount, opts={}) {
 	let from = undefined;
 	let key = undefined;
 	if (!opts.mnemonic && !opts.key && !opts.keystore) {
