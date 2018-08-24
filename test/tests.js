@@ -83,7 +83,7 @@ describe('flex-contract', function() {
 	it('can transfer ether via with non-default units', async function() {
 		const to = randomAccount();
 		const receipt = await lib.sendEther(to.address, 1,
-			{provider: provider, units: 9, quiet: true});
+			{provider: provider, decimals: 9, quiet: true});
 		assert.ok(receipt.transactionHash);
 		assert.equal(await eth.getBalance(to.address), toWei(1, 9));
 	});

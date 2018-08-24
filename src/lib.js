@@ -38,7 +38,7 @@ async function sendEther(to, amount, opts={}) {
 		throw new Error(`Invalid amount: ${amount}`);
 
 	to = ethjs.isValidAddress(to) ? ethjs.toChecksumAddress(to) : to;
-	amount = toWei(amount, _.isNumber(opts.units) ? opts.units : 18);
+	amount = toWei(amount, _.isNumber(opts.decimals) ? opts.decimals : 18);
 	const confirmations = opts.confirmations || 0;
 	const txOpts = await createTransferOpts(opts);
 	const eth = createFlexEther(txOpts);
@@ -52,6 +52,8 @@ async function sendEther(to, amount, opts={}) {
 	const writeLog = opts.log ? createJSONLogger(logId, opts.log) : _.noop;
 	const say = opts.quiet ? _.noop : console.log;
 
+	if (_.isNil(opts.decimals))
+		say(`Warning: the default decimal places for amounts is now 18!`.bold.red);
 	say(`${sender.blue.bold} -> ${toDecimal(amount).yellow.bold} -> ${to.blue.bold}`);
 	if (opts.confirm) {
 		if (!(await confirm()))

@@ -10,7 +10,7 @@ process.on('unhandledRejection', console.error);
 program
 	.version(VERSION, '-v, --version')
 	.arguments('<to> <amount>')
-	.option('-u, --units <n>', `decimal places amount is expressed in (default: 18)`, parseInt)
+	.option('-d, --decimals <n>', `decimal places amount is expressed in (default: 18)`, parseInt)
 	.option('-k, --key <hex>', `sending wallet's private key`)
 	.option('-f, --key-file <file>', `sending wallet's private key file`)
 	.option('-s, --keystore-file <file>', `sending wallet's keystore file`)
