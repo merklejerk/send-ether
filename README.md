@@ -43,11 +43,11 @@ $ send-ether --key $PRIVATE_KEY $DST 100.2
 
 # Send 5.2 gwei (5.2e-9 ether) to an address, on ropsten,
 # using an HD wallet mnemonic
-$ send-ether --network ropsten --mnemonic "$MNEMONIC" $DST 5.2 -u 9
+$ send-ether --network ropsten --mnemonic "$MNEMONIC" $DST 5.2 -d 9
 
 # Send 10 wei (100e-18 ether) to an address, on the mainnet,
 # using a keystore file.
-$ send-ether --keystore './path/to/keystore.json' --password 'secret' $DST 10 -u 0
+$ send-ether --keystore './path/to/keystore.json' --password 'secret' $DST 10 -d 0
 
 # Send 1.5 ether to an address, on the provider's network,
 # using the provider's default wallet, and wait for 3 confirmations.
@@ -62,7 +62,7 @@ Usage: send-ether [options] <to> <amount>
 Options:
 
   -v, --version               output the version number
-  -u, --units <n>              decimal places amount is expressed in (default: 18)
+  -d, --decimals <n>          decimal places amount is expressed in (default: 18)
   -k, --key <hex>             sending wallet's private key
   -f, --key-file <file>       sending wallet's private key file
   -s, --keystore-file <file>  sending wallet's keystore file
@@ -143,7 +143,7 @@ const MNEMONIC = 'butter crepes sugar flour eggs milk ...';
 // Send 32 wei (32e-18) to someone using a (BIP39) mnemonic phrase
 // and wait for it to be mined and confirmed 3 times.
 receipt = await sendEther(RECIPIENT, '32',
-  {mnemonic: MNEMONIC, confirmations: 3, units: 0});
+  {mnemonic: MNEMONIC, confirmations: 3, decimals: 0});
 
 // Sending wallet's keystore file contents as a string.
 const KEYSTORE = '{...}';
@@ -154,7 +154,7 @@ const PASSWORD = 'secret';
 receipt = await sendEther(RECIPIENT, '20.1', {
     keystore: KEYSTORE,
     password: PASSWORD,
-    units: 9,
+    decimals: 9,
     onTxId: console.log
   });
 ```
@@ -168,7 +168,7 @@ const {sendEther} = require('send-ether');
   // Address of recipient.
   // Should be a hex string ('0x...')
   RECIPIENT: String,
-  // Amount of ether to send. Units depend on `units` option.
+  // Amount of ether to send. Units depend on `decimals` option.
   // Should be a base-10 decimal string (e.g., '1234.567').
   AMOUNT: String,
   // Options object
@@ -182,9 +182,9 @@ const {sendEther} = require('send-ether');
     // not yet mined).
     onTxId: Function,
     // Decimal places of amount.
-    // E.g., 18 for whole ether, 0 for wei or smallest units.
+    // E.g., 18 for whole ether, 0 for wei or smallest decimals.
     // Defaults to 18.
-    units: Number,
+    decimals: Number,
     // If connecting to a custom provider (e.g., a private node), this
     // can be the set to the address of an unlocked wallet on the provider
     // from which to send the ether.
