@@ -37,21 +37,21 @@ PRIVATE_KEY='0x52c251b9e04740157471a724e9a3210b83fac5834b29c89d5bd57661bd2a7057'
 # Sending wallet's HD mnemonic.
 MNEMONIC='butter crepes sugar flour eggs milk ...'
 
-# Send 100 wei (100e-18) to and address,
+# Send 100.2 ether to and address,
 # on the mainnet, using a wallet's private key
-$ send-ether --key $PRIVATE_KEY $DST 100
+$ send-ether --key $PRIVATE_KEY $DST 100.2
 
-# Send 100 wei (100e-18) to an address, on ropsten,
+# Send 5.2 gwei (5.2e-9 ether) to an address, on ropsten,
 # using an HD wallet mnemonic
-$ send-ether --network ropsten --mnemonic "$MNEMONIC" $DST 100
+$ send-ether --network ropsten --mnemonic "$MNEMONIC" $DST 5.2 -u 9
 
-# Send 100 wei (100e-18) to an address, on the mainnet,
+# Send 10 wei (100e-18 ether) to an address, on the mainnet,
 # using a keystore file.
-$ send-ether --keystore './path/to/keystore.json' --password 'secret' $DST 100
+$ send-ether --keystore './path/to/keystore.json' --password 'secret' $DST 10 -u 0
 
-# Send 100 wei (100e-18) to an address, on the provider's network,
+# Send 1.5 ether to an address, on the provider's network,
 # using the provider's default wallet, and wait for 3 confirmations.
-$ send-ether --provider 'http://localhost:8545' --confirmations 3 $DST 100
+$ send-ether --provider 'http://localhost:8545' --confirmations 3 $DST 1.5
 ```
 
 ## All Options
@@ -62,7 +62,7 @@ Usage: send-ether [options] <to> <amount>
 Options:
 
   -v, --version               output the version number
-  -b, --base <n>              decimal places amount is expressed in (e.g, 0 for wei, 18 for ether) (default: 0)
+  -u, --units <n>              decimal places amount is expressed in (default: 18)
   -k, --key <hex>             sending wallet's private key
   -f, --key-file <file>       sending wallet's private key file
   -s, --keystore-file <file>  sending wallet's keystore file
@@ -133,28 +133,28 @@ const RECIPIENT = '0x0420DC92A955e3e139b52142f32Bd54C6D46c023';
 
 // Sending wallet's private key.
 const PRIVATE_KEY = '0x52c251b9e04740157471a724e9a3210b83fac5834b29c89d5bd57661bd2a7057';
-// Send 100 wei (100e-18) to someone using a private key and wait for
+// Send 100.5 ether to someone using a private key and wait for
 // it to be mined.
-let receipt = await sendEther(RECIPIENT, '100',
+let receipt = await sendEther(RECIPIENT, '100.5',
   {key: PRIVATE_KEY});
 
 // Sending wallet's mnemonic.
 const MNEMONIC = 'butter crepes sugar flour eggs milk ...';
-// Send 100 wei (100e-18) to someone using a (BIP39) mnemonic phrase
+// Send 32 wei (32e-18) to someone using a (BIP39) mnemonic phrase
 // and wait for it to be mined and confirmed 3 times.
-receipt = await sendEther(RECIPIENT, '100',
-  {mnemonic: MNEMONIC, confirmations: 3});
+receipt = await sendEther(RECIPIENT, '32',
+  {mnemonic: MNEMONIC, confirmations: 3, units: 0});
 
 // Sending wallet's keystore file contents as a string.
 const KEYSTORE = '{...}';
 // Keystore password.
 const PASSWORD = 'secret';
-// Send 1 ether (1e18) to someone using a keystore file,
+// Send 20.1 gwei (1e-9) to someone using a keystore file,
 // print the transaction ID when it's available, and wait for it to be mined.
-receipt = await sendEther(RECIPIENT, '1', {
+receipt = await sendEther(RECIPIENT, '20.1', {
     keystore: KEYSTORE,
     password: PASSWORD,
-    base: 18,
+    units: 9,
     onTxId: console.log
   });
 ```
@@ -169,7 +169,7 @@ const {sendEther} = require('send-ether');
   // Should be a hex string ('0x...')
   RECIPIENT: String,
   // Amount of ether to send. Units depend on `base` option.
-  // Should be a base-10 string (e.g., '1234...').
+  // Should be a base-10 decimal string (e.g., '1234.567').
   AMOUNT: String,
   // Options object
   {
@@ -183,8 +183,8 @@ const {sendEther} = require('send-ether');
     onTxId: Function,
     // Decimal places of amount.
     // E.g., 18 for whole ether, 0 for wei or smallest units.
-    // Defaults to 0.
-    base: Number,
+    // Defaults to 18.
+    units: Number,
     // If connecting to a custom provider (e.g., a private node), this
     // can be the set to the address of an unlocked wallet on the provider
     // from which to send the ether.

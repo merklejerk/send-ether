@@ -34,11 +34,11 @@ function toWallet(opts) {
 async function sendEther(to, amount, opts={}) {
 	if (!/^(\w+\.)*\w+\.(test|eth)$/.test(to) && !ethjs.isValidAddress(to))
 		throw new Error(`Invalid address: ${to}`);
-	if (!/^\d+(\.\d+)?$/.test(amount))
+	if (!_.isNumber(amount) && !/^\d+(\.\d+)?$/.test(amount))
 		throw new Error(`Invalid amount: ${amount}`);
 
 	to = ethjs.isValidAddress(to) ? ethjs.toChecksumAddress(to) : to;
-	amount = toWei(amount, opts.base || 0);
+	amount = toWei(amount, _.isNumber(opts.units) ? opts.units : 18);
 	const confirmations = opts.confirmations || 0;
 	const txOpts = await createTransferOpts(opts);
 	const sender = await resolveSender(txOpts);
@@ -51,7 +51,7 @@ async function sendEther(to, amount, opts={}) {
 	const writeLog = opts.log ? createJSONLogger(logId, opts.log) : _.noop;
 	const say = opts.quiet ? _.noop : console.log;
 
-	say(`${sender.blue.bold} -> ${amount.yellow.bold} -> ${to.blue.bold}`);
+	say(`${sender.blue.bold} -> ${toDecimal(amount).yellow.bold} -> ${to.blue.bold}`);
 	if (opts.confirm) {
 		if (!(await confirm()))
 			return;
@@ -102,7 +102,11 @@ async function resolveSender(opts) {
 	return eth.getDefaultAccount();
 }
 
-function toWei(amount, base=0) {
+function toDecimal(amount, base=18) {
+	return new BigNumber(amount).div(`1e${base}`).toString(10);
+}
+
+function toWei(amount, base) {
 	return new BigNumber(amount).times(`1e${base}`).integerValue().toString(10);
 }
 
