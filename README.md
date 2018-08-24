@@ -75,7 +75,7 @@ Options:
   -n, --network <name>        network name
   -G, --gas-price <gwei>      explicit gas price, in gwei (e.g., 20)
   -l, --log <file>            append a JSON log to a file
-  --confirm                   confirm before proceeding
+  --no-confirm                bypass confirmation
   -h, --help                  output usage information
 ```
 

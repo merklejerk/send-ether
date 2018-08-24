@@ -23,7 +23,7 @@ program
 	.option('-n, --network <name>', 'network name')
 	.option('-G, --gas-price <gwei>', `explicit gas price, in gwei (e.g., 20)`, parseFloat)
 	.option('-l, --log <file>', `append a JSON log to a file`)
-	.option('--no-confirm', `prevent confirmation`)
+	.option('--no-confirm', `bypass confirmation`)
 	.action(async function (token, to, amount) {
 		try {
 			const opts = _.assign({}, this, {confirm: !this.noConfirm});
