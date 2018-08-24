@@ -54,8 +54,6 @@ async function sendEther(to, amount, opts={}) {
 	const writeLog = opts.log ? createJSONLogger(logId, opts.log) : _.noop;
 	const say = opts.quiet ? _.noop : console.log;
 
-	if (_.isNil(opts.decimals))
-		say(`Warning: the default decimal places for amounts is 18.`.bold.red);
 	say(`${sender.blue.bold} -> ${toDecimal(amount).yellow.bold} -> ${to.blue.bold}`);
 	if (opts.confirm) {
 		if (!(await confirm()))
