@@ -1,6 +1,6 @@
 {
 	"name": "send-ether",
-	"version": "2.1.7",
+	"version": "2.1.8",
 	"description": "Simple CLI tool (and library) to send ether with a private key, mnemonic, or keystore.",
 	"main": "src/lib.js",
 	"repository": {
