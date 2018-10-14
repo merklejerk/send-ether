@@ -1,4 +1,4 @@
-[![build status](https://travis-ci.org/cluracan/send-ether.svg?branch=master)](https://travis-ci.org/cluracan/send-ether)
+[![build status](https://travis-ci.org/merklejerk/send-ether.svg?branch=master)](https://travis-ci.org/merklejerk/send-ether)
 [![npm package](https://badge.fury.io/js/send-ether.svg)](https://www.npmjs.com/package/send-ether)
 
 # send-ether
@@ -10,7 +10,7 @@ A simple CLI tool for sending Ethereum ether using any of the following:
 - A provider (node) wallet address
 
 For the ERC20 token version of this package, check out
-[send-tokens](https://github.com/cluracan/send-tokens).
+[send-tokens](https://github.com/merklejerk/send-tokens).
 
 ### Contents
 

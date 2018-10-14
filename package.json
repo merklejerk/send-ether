@@ -1,14 +1,14 @@
 {
 	"name": "send-ether",
-	"version": "2.1.8",
+	"version": "2.1.9",
 	"description": "Simple CLI tool (and library) to send ether with a private key, mnemonic, or keystore.",
 	"main": "src/lib.js",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/cluracan/send-ether.git"
+		"url": "https://github.com/merklejerk/send-ether.git"
 	},
 	"bugs": {
-		"url": "https://github.com/cluracan/send-ether/issues"
+		"url": "https://github.com/merklejerk/send-ether/issues"
 	},
 	"author": "Lawrence Forman <not.larry@klv.io>",
 	"license": "Apache-2.0",
