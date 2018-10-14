@@ -1,6 +1,6 @@
 {
 	"name": "send-ether",
-	"version": "2.1.9",
+	"version": "2.1.10",
 	"description": "Simple CLI tool (and library) to send ether with a private key, mnemonic, or keystore.",
 	"main": "src/lib.js",
 	"repository": {
@@ -10,7 +10,7 @@
 	"bugs": {
 		"url": "https://github.com/merklejerk/send-ether/issues"
 	},
-	"author": "Lawrence Forman <not.larry@klv.io>",
+	"author": "Lawrence Forman <me@merklejerk.com>",
 	"license": "Apache-2.0",
 	"scripts": {
 		"start": "node src/send-ether.js",
