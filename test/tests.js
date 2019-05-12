@@ -35,15 +35,30 @@ describe('flex-contract', function() {
 	it('fails if insufficient balance', async function() {
 		const amount = _.random(1, 10);
 		const to = randomAccount();
-		await assert.rejects(lib.sendEther(to.address, amount,
-				{from: accounts[1].address, provider: provider, quiet: true}));
+		await assert.rejects(
+			lib.sendEther(
+				to.address,
+				amount,
+				{
+					from: accounts[1].address,
+					provider: provider,
+					quiet: true
+				}
+			)
+		);
 	});
 
 	it('can transfer ether via default account', async function() {
 		const amount = _.random(1, 10);
 		const to = randomAccount();
-		const receipt = await lib.sendEther(to.address, amount,
-			{provider: provider, quiet: true});
+		const receipt = await lib.sendEther(
+			to.address,
+			amount,
+			{
+				provider: provider,
+				quiet: true
+			}
+		);
 		assert.ok(receipt.transactionHash);
 		assert.equal(await eth.getBalance(to.address), toWei(amount));
 	});
@@ -51,8 +66,15 @@ describe('flex-contract', function() {
 	it('can transfer ether via private key', async function() {
 		const amount = _.random(1, 10);
 		const to = randomAccount();
-		const receipt = await lib.sendEther(to.address, amount,
-			{key: accounts[0].key, provider: provider, quiet: true});
+		const receipt = await lib.sendEther(
+			to.address,
+			amount,
+			{
+				key: accounts[0].key,
+				provider: provider,
+				quiet: true
+			}
+		);
 		assert.ok(receipt.transactionHash);
 		assert.equal(await eth.getBalance(to.address), toWei(amount));
 	});
@@ -62,8 +84,16 @@ describe('flex-contract', function() {
 		const to = randomAccount();
 		const PW = crypto.randomBytes(8).toString('hex');
 		const keystore = createKeystore(accounts[0], PW);
-		const receipt = await lib.sendEther(to.address, amount,
-			{keystore: keystore, password: PW, provider: provider, quiet: true});
+		const receipt = await lib.sendEther(
+			to.address,
+			amount,
+			{
+				keystore: keystore,
+				password: PW,
+				provider: provider,
+				quiet: true
+			}
+		);
 		assert.ok(receipt.transactionHash);
 		assert.equal(await eth.getBalance(to.address), toWei(amount));
 	});
@@ -74,16 +104,30 @@ describe('flex-contract', function() {
 		const to = randomAccount();
 		const from = fromMnemonic(mnemonic);
 		await eth.transfer(from.address, toWei(amount+0.01));
-		const receipt = await lib.sendEther(to.address, amount,
-			{mnemonic: mnemonic, provider: provider, quiet: true});
+		const receipt = await lib.sendEther(
+			to.address,
+			amount,
+			{
+				mnemonic: mnemonic,
+				provider: provider,
+				quiet: true
+			}
+		);
 		assert.ok(receipt.transactionHash);
 		assert.equal(await eth.getBalance(to.address), toWei(amount));
 	});
 
 	it('can transfer ether via with non-default units', async function() {
 		const to = randomAccount();
-		const receipt = await lib.sendEther(to.address, 1,
-			{provider: provider, decimals: 9, quiet: true});
+		const receipt = await lib.sendEther(
+			to.address,
+			1,
+			{
+				provider: provider,
+				decimals: 9,
+				quiet: true
+			}
+		);
 		assert.ok(receipt.transactionHash);
 		assert.equal(await eth.getBalance(to.address), toWei(1, 9));
 	});
@@ -96,7 +140,8 @@ function toWei(amount, base=18) {
 function randomAccount() {
 	const key = crypto.randomBytes(32);
 	const address = ethjs.toChecksumAddress(
-		ethjs.bufferToHex(ethjs.privateToAddress(key)));
+		ethjs.bufferToHex(ethjs.privateToAddress(key))
+	);
 	return {
 		key: ethjs.bufferToHex(key),
 		address: address
@@ -109,7 +154,7 @@ function createKeystore(acct, pw) {
 }
 
 function fromMnemonic(mnemonic, idx=0) {
-	const seed = bip39.mnemonicToSeed(mnemonic.trim());
+	const seed = bip39.mnemonicToSeedSync(mnemonic.trim());
 	const path = `m/44'/60'/0'/0/${idx}`;
 	const node = ethjshdwallet.fromMasterSeed(seed).derivePath(path);
 	const wallet = node.getWallet();

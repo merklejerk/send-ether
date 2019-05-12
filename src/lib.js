@@ -32,12 +32,15 @@ function toWallet(opts) {
 }
 
 async function sendEther(to, amount, opts={}) {
-	if (!/^(\w+\.)*\w+\.(test|eth)$/.test(to) && !ethjs.isValidAddress(to))
+	if (!/^(\w+\.)*\w+\.(test|eth)$/.test(to) && !ethjs.isValidAddress(to)) {
 		throw new Error(`Invalid address: ${to}`);
-	if (!_.isNumber(amount) && !/^\d+(\.\d+)?$/.test(amount))
+	}
+	if (!_.isNumber(amount) && !/^\d+(\.\d+)?$/.test(amount)) {
 		throw new Error(`Invalid amount: ${amount}`);
-	if (!_.isNil(opts.decimals) && !_.inRange(opts.decimals, 0, 256))
-			throw new Error(`Invalid decimals: ${opts.decimals}`);
+	}
+	if (!_.isNil(opts.decimals) && !_.inRange(opts.decimals, 0, 256)) {
+		throw new Error(`Invalid decimals: ${opts.decimals}`);
+	}
 
 	to = ethjs.isValidAddress(to) ? ethjs.toChecksumAddress(to) : to;
 	amount = toWei(amount, _.isNumber(opts.decimals) ? opts.decimals : 18);
@@ -46,8 +49,9 @@ async function sendEther(to, amount, opts={}) {
 	const eth = createFlexEther(txOpts);
 	const sender = await resolveSender(eth, txOpts);
 
-	if (!sender)
+	if (!sender) {
 		throw new Error('Cannot determine sender.');
+	}
 
 	const logId = createLogId({
 		time: _.now(),
@@ -60,17 +64,18 @@ async function sendEther(to, amount, opts={}) {
 
 	say(`${sender.blue.bold} -> ${toDecimal(amount).yellow.bold} -> ${to.blue.bold}`);
 	if (opts.confirm) {
-		if (!(await confirm()))
+		if (!(await confirm())) {
 			return;
+		}
 	}
 
 	const {tx} = await transfer(eth, to, amount, txOpts);
 	const txId = await tx.txId;
-	if (_.isFunction(opts.onTxId))
+	if (_.isFunction(opts.onTxId)) {
 		opts.onTxId(txId);
+	}
 
 	say(`Waiting for transaction ${txId.green.bold} to be mined...`);
-
 	const receipt = await tx.confirmed(confirmations);
 
 	writeLog({
@@ -86,20 +91,24 @@ async function sendEther(to, amount, opts={}) {
 
 function confirm() {
 	return new Promise((accept, reject) => {
-		prompt.get({
+		prompt.get(
+			{
 				description: 'Proceed? [y/N]',
 				name: 'answer',
-			}, (err, {answer}) => {
+			},
+			(err, {answer}) => {
 				answer = (answer || 'n').toLowerCase();
 				accept(answer == 'y' || answer == 'yes');
-			});
+			}
+		);
 	});
 }
 
 async function resolveSender(eth, opts) {
 	const w = toWallet(opts);
-	if (w && w.address)
+	if (w && w.address) {
 		return w.address;
+	}
 	return eth.getDefaultAccount();
 }
 
@@ -118,8 +127,9 @@ async function createTransferOpts(opts) {
 		if (!/^0x[a-f0-9]{64}$/i.test(txOpts.key))
 			throw new Error('Invalid private key.');
 	}
-	else if (opts.keyFile)
+	else if (opts.keyFile) {
 		txOpts.key = await fs.readFile(opts.keyFile, 'utf-8');
+	}
 	else if (opts.keystoreFile) {
 		txOpts.keystore = await fs.readFile(opts.keystoreFile, 'utf-8');
 		txOpts.password = opts.password;
@@ -131,38 +141,46 @@ async function createTransferOpts(opts) {
 	else if (opts.mnemonic) {
 		txOpts.mnemonicIndex = opts.mnemonicIndex || 0;
 		txOpts.mnemonic = opts.mnemonic.trim();
-	} else if (opts.account)
+	} else if (opts.account) {
 		txOpts.from = opts.account;
-	else if (opts.from)
+	}
+	else if (opts.from) {
 		txOpts.from = opts.from;
+	}
 
 	if (opts.provider) {
-		if (_.isString(opts.provider))
+		if (_.isString(opts.provider)) {
 			txOpts.providerURI = opts.provider;
-		else
+		}
+		else {
 			txOpts.provider = opts.provider;
+		}
 	}
-	if (opts.network)
+	if (opts.network) {
 		txOpts.network = opts.network;
+	}
 
 	if (opts.gasPrice) {
-		txOpts.gasPrice = new BigNumber('1e9').times(opts.gasPrice)
-			.integerValue().toString(10);
+		txOpts.gasPrice = new BigNumber('1e9')
+			.times(opts.gasPrice)
+			.integerValue()
+			.toString(10);
 	}
-	if (txOpts.keystore && !txOpts.password)
+	if (txOpts.keystore && !txOpts.password) {
 		txOpts.password = await promptForPassword();
+	}
 	return txOpts;
 }
 
 function createFlexEther(opts) {
 	return new FlexEther({
-			provider: opts.provider,
-			providerURI: opts.providerURI,
-			network: opts.network,
-			infuraKey: opts.infuraKey,
-			web3: opts.web3,
-			net: require('net')
-		});
+		provider: opts.provider,
+		providerURI: opts.providerURI,
+		network: opts.network,
+		infuraKey: opts.infuraKey,
+		web3: opts.web3,
+		net: require('net')
+	});
 }
 
 function promptForPassword() {
@@ -172,11 +190,13 @@ function promptForPassword() {
 				name: 'pw',
 				hidden: true,
 				replace: '*'
-			}, (err, {pw}) => {
+			},
+			(err, {pw}) => {
 				if (!pw)
 					return reject(pw);
 				accept(pw);
-			});
+			}
+		);
 	});
 }
 
@@ -188,13 +208,21 @@ function createLogId(fields) {
 		amount: ethjs.bufferToHex(ethjs.toUnsigned(new ethjs.BN(fields.amount)))
 	};
 	return ethjs.bufferToHex(
-		ethjs.keccak256(Buffer.from(JSON.stringify(s))).slice(0, 8)).slice(2);
+		ethjs.keccak256(
+			Buffer.from(JSON.stringify(s))
+		).slice(0, 8)
+	).slice(2);
 }
 
 function createJSONLogger(logId, file) {
 	return (payload={}) => {
-		const data = _.assign(payload,
-			{time: Math.floor(_.now() / 1000), id: logId});
+		const data = _.assign(
+			payload,
+			{
+				time: Math.floor(_.now() / 1000),
+				id: logId
+			}
+		);
 		const line = JSON.stringify(data);
 		fs.appendFileSync(file, `${line}\n`);
 	};
@@ -204,57 +232,68 @@ async function transfer(eth, to, amount, opts={}) {
 	let from = undefined;
 	let key = undefined;
 	if (!opts.mnemonic && !opts.key && !opts.keystore) {
-		if (opts.from)
+		if (opts.from) {
 			from = opts.from;
-		else
+		}
+		else {
 			from = await eth.getDefaultAccount();
+		}
 	} else {
 		const w = toWallet(opts);
 		from = w.address;
 		key = w.key;
 	}
-	if (!from)
+	if (!from) {
 		throw new Error('No account to send from.');
+	}
 	await verifyEtherBalance(eth, from, amount);
-	return {tx: eth.transfer(to, amount, {
-		from: key ? undefined : from,
-		key: key,
-		gasPrice: opts.gasPrice
-	})};
+	return {
+		tx: eth.transfer(to, amount, {
+			from: key ? undefined : from,
+			key: key,
+			gasPrice: opts.gasPrice
+		})
+	};
 }
 
 async function verifyEtherBalance(eth, from, amount) {
 	const balance = await eth.getBalance(from);
-	if (new BigNumber(balance).lt(amount))
+	if (new BigNumber(balance).lt(amount)) {
 		throw new Error('Insufficient balance.');
+	}
 }
 
 function keyToAddress(key) {
-	return ethjs.toChecksumAddress(ethjs.bufferToHex(
-		ethjs.privateToAddress(ethjs.toBuffer(key))));
+	return ethjs.toChecksumAddress(
+		ethjs.bufferToHex(ethjs.privateToAddress(ethjs.toBuffer(key)))
+	);
 }
 
 function getPrivateKey(opts) {
 	if (opts.key) {
 		return ethjs.addHexPrefix(opts.key);
 	}
-	if (opts.keystore)
+	if (opts.keystore) {
 		return fromKeystore(opts.keystore, opts.password);
-	if (opts.mnemonic)
+	}
+	if (opts.mnemonic) {
 		return fromMnemonic(opts.mnemonic, opts.mnemonicIndex || 0);
+	}
 }
 
 function fromKeystore(keystore, pw) {
-	if (!pw)
+	if (!pw) {
 		throw new Error('Keystore requires password.');
-	if (_.isObject(keystore))
+	}
+	if (_.isObject(keystore)) {
 		keystore = JSON.stringify(keystore);
+	}
 	const wallet = ethwallet.fromV3(keystore, pw, true);
 	return ethjs.bufferToHex(wallet.getPrivateKey());
 }
 
 function fromMnemonic(mnemonic, idx=0) {
-	const seed = bip39.mnemonicToSeed(mnemonic.trim());
+	const seed = bip39.mnemonicToSeedSync(mnemonic.trim());
 	const path = `m/44'/60'/0'/0/${idx}`;
 	const node = ethjshdwallet.fromMasterSeed(seed).derivePath(path);
 	const wallet = node.getWallet();
