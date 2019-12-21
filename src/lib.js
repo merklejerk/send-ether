@@ -62,7 +62,7 @@ async function sendEther(to, amount, opts={}) {
 	const writeLog = opts.log ? createJSONLogger(logId, opts.log) : _.noop;
 	const say = opts.quiet ? _.noop : console.log;
 
-	say(`${sender.blue.bold} -> ${toDecimal(amount).yellow.bold} -> ${to.blue.bold}`);
+	say(`${sender.blue.bold} -> ${toDecimal(amount).yellow.bold} ETH -> ${to.blue.bold}`);
 	if (opts.confirm) {
 		if (!(await confirm())) {
 			return;
@@ -126,25 +126,20 @@ async function createTransferOpts(opts) {
 		txOpts.key = ethjs.addHexPrefix(opts.key);
 		if (!/^0x[a-f0-9]{64}$/i.test(txOpts.key))
 			throw new Error('Invalid private key.');
-	}
-	else if (opts.keyFile) {
+	} else if (opts.keyFile) {
 		txOpts.key = await fs.readFile(opts.keyFile, 'utf-8');
-	}
-	else if (opts.keystoreFile) {
+	} else if (opts.keystoreFile) {
 		txOpts.keystore = await fs.readFile(opts.keystoreFile, 'utf-8');
 		txOpts.password = opts.password;
-	}
-	else if (opts.keystore) {
+	} else if (opts.keystore) {
 		txOpts.keystore = opts.keystore;
 		txOpts.password = opts.password;
-	}
-	else if (opts.mnemonic) {
+	} else if (opts.mnemonic) {
 		txOpts.mnemonicIndex = opts.mnemonicIndex || 0;
 		txOpts.mnemonic = opts.mnemonic.trim();
 	} else if (opts.account) {
 		txOpts.from = opts.account;
-	}
-	else if (opts.from) {
+	} else if (opts.from) {
 		txOpts.from = opts.from;
 	}
 
@@ -155,7 +150,10 @@ async function createTransferOpts(opts) {
 		else {
 			txOpts.provider = opts.provider;
 		}
+	} else if (opts.providerURI) {
+		txOpts.providerURI = opts.providerURI;
 	}
+
 	if (opts.network) {
 		txOpts.network = opts.network;
 	}
@@ -166,6 +164,7 @@ async function createTransferOpts(opts) {
 			.integerValue()
 			.toString(10);
 	}
+
 	if (txOpts.keystore && !txOpts.password) {
 		txOpts.password = await promptForPassword();
 	}
